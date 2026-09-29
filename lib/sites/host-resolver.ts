@@ -75,8 +75,12 @@ async function lookup(host: string): Promise<SiteHostInfo | null> {
     .limit(1);
   if (viaDomains[0]) return withExperimentState(viaDomains[0]);
 
+  // 2b. vercelDomain (for tenant subdomains like facebook.deviitor.com)
+  const vercelDirect = await db.select(cols).from(clientWebsites).where(and(eq(clientWebsites.vercelDomain, host), eq(clientWebsites.active, true))).limit(1);
+  if (vercelDirect[0]) return withExperimentState(vercelDirect[0]);
+
   // 3. Platform subdomain (<sub>.simplerdevelopment.com → clientWebsites.subdomain).
-  const sub = host.match(/^([^.]+)\.simplerdevelopment\.com$/);
+  const sub = host.match(new RegExp(`^([^.]+)\\.${process.env.NEXT_PUBLIC_TENANT_DOMAIN || "simplerdevelopment.com"}$`));
   if (sub) {
     const subSite = await db
       .select(cols)
