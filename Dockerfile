@@ -19,6 +19,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_IGNORE_ESLINT=1
 ENV NEXT_IGNORE_TYPECHECKS=1
+ENV DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
 RUN npx next build
 
 # Runner
