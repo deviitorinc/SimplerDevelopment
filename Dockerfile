@@ -7,6 +7,7 @@ COPY package.json bun.lock ./
 # If there are workspaces or packages, copy them so install works
 COPY packages packages
 COPY simplerdevelopment-agents simplerdevelopment-agents
+COPY workers workers
 RUN bun install --frozen-lockfile
 
 # Build
