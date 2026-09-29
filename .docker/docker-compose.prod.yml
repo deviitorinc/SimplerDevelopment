@@ -1,0 +1,21 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
+    container_name: shop_deviitor_app
+    restart: unless-stopped
+    ports:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - /root/data/shop.deviitor.com/configs/.env
+    networks:
+      - https_network
+
+networks:
+  https_network:
+    external:
+      name: apps_https_network
