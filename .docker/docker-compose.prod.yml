@@ -14,6 +14,56 @@ services:
       - /root/data/shop.deviitor.com/configs/.env
     networks:
       - https_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: shop_deviitor_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: simplerdev
+      POSTGRES_PASSWORD: simplerdev_password
+      POSTGRES_DB: simplerdev
+    volumes:
+      - /root/data/shop.deviitor.com/postgres:/var/lib/postgresql/data
+    networks:
+      - https_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U simplerdev -d simplerdev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: shop_deviitor_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin_password
+    volumes:
+      - /root/data/shop.deviitor.com/minio:/data
+    networks:
+      - https_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio-init:
+    image: minio/mc
+    container_name: shop_deviitor_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - https_network
+    restart: "no"
+    entrypoint: sh -c "mc alias set local http://minio:9000 minioadmin minioadmin_password && mc mb --ignore-existing local/simplerdev-media && mc anonymous set download local/simplerdev-media"
 
   realtime:
     build:
