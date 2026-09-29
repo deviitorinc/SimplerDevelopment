@@ -76,7 +76,7 @@ export default async function RootLayout({
   // host that multiplexes BOTH the marketing site (/) and client sites
   // (/sites/<domain>) on one host, so hostname alone can't tell them apart —
   // the middleware forwards `x-site-pathname` on /sites/* routes to mark them.
-  const APP_HOSTS = ["localhost", "127.0.0.1", "simplerdevelopment.com", "www.simplerdevelopment.com", "staging.simplerdevelopment.com"];
+  const APP_HOSTS = ["localhost", "127.0.0.1", "simplerdevelopment.com", "www.simplerdevelopment.com", "staging.simplerdevelopment.com", "shop.deviitor.com"];
   const hostname = host.split(":")[0];
   const isSitesRoute = headersList.get("x-site-pathname") !== null;
   const isClientSite = isSitesRoute || (!APP_HOSTS.includes(hostname) && !hostname.endsWith(".railway.app"));
