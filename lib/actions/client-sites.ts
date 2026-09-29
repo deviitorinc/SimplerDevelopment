@@ -33,8 +33,12 @@ export async function getClientWebsiteByDomain(domain: string) {
 
   if (via?.site) return via.site;
 
+  // Fallback to vercelDomain (which stores the full tenant subdomain like facebook.deviitor.com)
+  const [vercelSite] = await db.select().from(clientWebsites).where(and(eq(clientWebsites.vercelDomain, domain), eq(clientWebsites.active, true))).limit(1);
+  if (vercelSite) return vercelSite;
+
   // Fall back to subdomain match (e.g. sd-testing.simplerdevelopment.com → subdomain "sd-testing")
-  const subdomainMatch = domain.match(/^([^.]+)\.simplerdevelopment\.com$/);
+  const subdomainMatch = domain.match(new RegExp(`^([^.]+)\\.${process.env.NEXT_PUBLIC_TENANT_DOMAIN || "simplerdevelopment.com"}$`));
   if (subdomainMatch) {
     const [subSite] = await db
       .select()
