@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     description: description || null,
     subdomain,
     vercelDomain: `${subdomain}.${platformDomain}`,
-    deploymentStatus: 'pending',
+    deploymentStatus: isSimple ? 'deployed' : 'pending',
     active: true,
     isSimple: isSimple === true,
   }).returning();
