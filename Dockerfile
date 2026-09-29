@@ -1,4 +1,5 @@
 FROM oven/bun:1.1.20-alpine AS base
+RUN apk add --no-cache python3 make g++
 WORKDIR /app
 
 # Install dependencies
