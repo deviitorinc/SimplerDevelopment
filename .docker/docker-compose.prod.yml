@@ -20,7 +20,7 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     container_name: shop_deviitor_db
     restart: unless-stopped
     environment:
