@@ -59,13 +59,14 @@ export async function POST(req: Request) {
     subdomain = await generateUniqueSubdomain(companyName, name);
   }
 
+  const platformDomain = (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:///, '');
   const [site] = await db.insert(clientWebsites).values({
     clientId: client.id,
     name,
     domain: domain || null,
     description: description || null,
     subdomain,
-    vercelDomain: `${subdomain}.simplerdevelopment.com`,
+    vercelDomain: `${subdomain}.${platformDomain}`,
     deploymentStatus: 'pending',
     active: true,
   }).returning();

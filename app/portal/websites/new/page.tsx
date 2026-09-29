@@ -16,6 +16,7 @@ const WEBSITE_TYPES = [
 ];
 
 export default function PortalCmsNewPage() {
+  const platformDomain = (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:///, '');
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState({ name: '', domain: '', description: '', websiteType: '', subdomain: '' });
@@ -162,7 +163,7 @@ export default function PortalCmsNewPage() {
         <div className="space-y-5">
           <div>
             <h1 className="text-xl font-display font-extrabold tracking-[-0.02em] text-foreground">Your website address</h1>
-            <p className="text-muted-foreground text-sm mt-1">Your site will be live at a simplerdevelopment.com subdomain. You can add a custom domain later.</p>
+            <p className="text-muted-foreground text-sm mt-1">Your site will be live at a {platformDomain} subdomain. You can add a custom domain later.</p>
           </div>
 
           {/* Subdomain */}
@@ -178,9 +179,7 @@ export default function PortalCmsNewPage() {
                     className="bg-transparent outline-none flex-1 text-sm text-foreground font-mono"
                   />
                 </div>
-                <div className="px-3 py-2.5 bg-muted border border-l-0 border-border rounded-r-lg text-sm text-muted-foreground font-mono shrink-0">
-                  .simplerdevelopment.com
-                </div>
+                <div className="px-3 py-2.5 bg-muted border border-l-0 border-border rounded-r-lg text-sm text-muted-foreground font-mono shrink-0">.{platformDomain}</div>
               </div>
               <p className="text-xs text-muted-foreground mt-1.5">
                 This will be your website&apos;s default URL
@@ -216,7 +215,7 @@ export default function PortalCmsNewPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">URL</span>
-              <span className="text-foreground font-mono text-xs">{effectiveSubdomain}.simplerdevelopment.com</span>
+              <span className="text-foreground font-mono text-xs">{effectiveSubdomain}.{platformDomain}</span>
             </div>
             {form.domain && (
               <div className="flex justify-between">
