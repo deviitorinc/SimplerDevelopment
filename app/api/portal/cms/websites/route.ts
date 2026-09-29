@@ -59,7 +59,7 @@ export async function POST(req: Request) {
     subdomain = await generateUniqueSubdomain(companyName, name);
   }
 
-  const platformDomain = process.env.NEXT_PUBLIC_TENANT_DOMAIN || (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:///, '');
+  const platformDomain = process.env.NEXT_PUBLIC_TENANT_DOMAIN || (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:\/\//, '');
   const [site] = await db.insert(clientWebsites).values({
     clientId: client.id,
     name,
