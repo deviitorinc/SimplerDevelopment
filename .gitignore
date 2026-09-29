@@ -178,3 +178,5 @@ public/agile-after-ai/_*
 
 # Local QA screen recordings — artifacts, never tracked.
 screen-recordings/
+
+!.docker/*

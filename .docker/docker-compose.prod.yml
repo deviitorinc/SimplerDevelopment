@@ -15,6 +15,32 @@ services:
     networks:
       - https_network
 
+  realtime:
+    build:
+      context: ../packages/realtime-server
+      dockerfile: Dockerfile
+    container_name: shop_deviitor_realtime
+    restart: unless-stopped
+    ports:
+      - "3030:3030"
+    env_file:
+      - /root/data/shop.deviitor.com/configs/.env
+    networks:
+      - https_network
+
+  agents:
+    build:
+      context: ../simplerdevelopment-agents
+      dockerfile: Dockerfile
+    container_name: shop_deviitor_agents
+    restart: unless-stopped
+    ports:
+      - "4111:3000"
+    env_file:
+      - /root/data/shop.deviitor.com/configs/.env
+    networks:
+      - https_network
+
 networks:
   https_network:
     external:
