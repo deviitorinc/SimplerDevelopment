@@ -30,7 +30,7 @@ export async function createCnameRecord(
       name, // e.g. "acme-main" → acme-main.simplerdevelopment.com
       content: target,
       ttl: 1, // auto
-      proxied: false, // let Vercel handle SSL
+      proxied: true, // Cloudflare SSL
     }),
   });
 
