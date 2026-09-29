@@ -37,7 +37,9 @@ services:
       retries: 10
 
   minio:
-    image: minio/minio:latest
+    build:
+      context: .
+      dockerfile: minio/Dockerfile
     container_name: shop_deviitor_minio
     restart: unless-stopped
     command: server /data --console-address ":9001"
