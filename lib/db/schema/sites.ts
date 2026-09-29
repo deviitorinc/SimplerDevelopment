@@ -196,6 +196,7 @@ export const clientWebsites = pgTable('client_websites', {
   domain: varchar('domain', { length: 255 }),
   description: text('description'),
   active: boolean('active').default(true).notNull(),
+  isSimple: boolean('is_simple').default(false).notNull(), // true = bypasses visual editor for simple form
   // Repository & deployment
   subdomain: varchar('subdomain', { length: 100 }), // slug for <slug>.simplerdevelopment.com
   githubRepoName: varchar('github_repo_name', { length: 255 }), // e.g. "simplerdevelopment/acme-main"

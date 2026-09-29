@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { clientWebsites } from '@/lib/db/schema';
+import { clientWebsites, posts } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { getPortalClient } from '@/lib/portal-client';
 import { authorizePortal, isAuthError } from '@/lib/portal-auth';
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
   if (!client) return NextResponse.json({ success: false, message: 'Client not found' }, { status: 404 });
 
   const body = await req.json();
-  const { name, domain, description, subdomain: requestedSubdomain } = body;
+  const { name, domain, description, subdomain: requestedSubdomain, isSimple } = body;
 
   if (!name) return NextResponse.json({ success: false, message: 'Website name is required' }, { status: 400 });
 
@@ -60,6 +60,7 @@ export async function POST(req: Request) {
   }
 
   const platformDomain = process.env.NEXT_PUBLIC_TENANT_DOMAIN || (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:\/\//, '');
+  
   const [site] = await db.insert(clientWebsites).values({
     clientId: client.id,
     name,
@@ -69,7 +70,59 @@ export async function POST(req: Request) {
     vercelDomain: `${subdomain}.${platformDomain}`,
     deploymentStatus: 'pending',
     active: true,
+    isSimple: isSimple === true,
   }).returning();
+
+  if (isSimple) {
+    const blocks = [
+      {
+        id: crypto.randomUUID(),
+        type: 'hero',
+        values: {
+          title: 'Welcome to ' + name,
+          subtitle: 'We are glad you are here.',
+          description: '',
+          primaryButtonText: 'Shop Now',
+          primaryButtonUrl: '#shop'
+        }
+      },
+      {
+        id: crypto.randomUUID(),
+        type: 'text',
+        values: {
+          content: '<h2>About Us</h2><p>Tell your story here...</p>'
+        }
+      },
+      {
+        id: crypto.randomUUID(),
+        type: 'featured-products',
+        values: {
+          title: 'Featured Products',
+          description: 'Check out our latest collection',
+          collectionId: ''
+        }
+      },
+      {
+        id: crypto.randomUUID(),
+        type: 'site-footer',
+        values: {
+          copyright: new Date().getFullYear().toString(),
+          showSocial: true
+        }
+      }
+    ];
+
+    await db.insert(posts).values({
+      websiteId: site.id,
+      title: 'Home',
+      slug: 'home',
+      postType: 'page',
+      content: JSON.stringify(blocks),
+      published: true,
+      publishedAt: new Date()
+    });
+  }
+
 
   return NextResponse.json({ success: true, data: site });
 }

@@ -10,7 +10,7 @@ import UploadHtmlPageButton from '@/components/portal/UploadHtmlPageButton';
 import CreateSnapshotButton from '@/components/portal/CreateSnapshotButton';
 import RequestActivationButton from './_components/RequestActivationButton';
 import { PortalPageHeader } from '@/components/portal/PortalPageHeader';
-import { pCard } from '@/components/portal/portal-ui';
+import { pCard, pBtnPrimary, pBtnGhost } from '@/components/portal/portal-ui';
 
 export default async function PortalCmsDashboardPage({
   params,

@@ -6,20 +6,11 @@ import Link from 'next/link';
 import { slugify } from '@/lib/publishing/slug';
 import { pBtnPrimary, pBtnGhost, pCard, pInput } from '@/components/portal/portal-ui';
 
-const WEBSITE_TYPES = [
-  { value: 'business', label: 'Business Website', icon: 'business', description: 'Company homepage, about, services, contact' },
-  { value: 'portfolio', label: 'Portfolio', icon: 'photo_library', description: 'Showcase your work and projects' },
-  { value: 'blog', label: 'Blog', icon: 'rss_feed', description: 'Articles, news, and long-form content' },
-  { value: 'landing', label: 'Landing Page', icon: 'web', description: 'Single-page focused on one goal' },
-  { value: 'ecommerce', label: 'E-commerce', icon: 'shopping_cart', description: 'Sell products online' },
-  { value: 'other', label: 'Something Else', icon: 'more_horiz', description: 'Custom setup — we\'ll figure it out together' },
-];
-
 export default function PortalCmsNewPage() {
   const platformDomain = process.env.NEXT_PUBLIC_TENANT_DOMAIN || (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:\/\//, '');
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [form, setForm] = useState({ name: '', domain: '', description: '', websiteType: '', subdomain: '' });
+  const [form, setForm] = useState({ name: '', domain: '', description: '', isSimple: false, subdomain: '' });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -37,6 +28,7 @@ export default function PortalCmsNewPage() {
         domain: form.domain || null,
         description: form.description || null,
         subdomain: effectiveSubdomain || null,
+        isSimple: form.isSimple,
       }),
     });
     const data = await res.json();
@@ -72,37 +64,50 @@ export default function PortalCmsNewPage() {
           </div>
         ))}
         <div className="ml-2 text-xs text-muted-foreground">
-          {step === 1 && 'Choose type'}
+          {step === 1 && 'Choose builder mode'}
           {step === 2 && 'Name your site'}
           {step === 3 && 'Domain (optional)'}
         </div>
       </div>
 
-      {/* Step 1 — Website type */}
+      {/* Step 1 — Builder Mode */}
       {step === 1 && (
         <div className="space-y-4">
           <div>
-            <h1 className="text-xl font-display font-extrabold tracking-[-0.02em] text-foreground">What kind of website are you building?</h1>
-            <p className="text-muted-foreground text-sm mt-1">This helps us set things up for you, but you can change it anytime.</p>
+            <h1 className="text-xl font-display font-extrabold tracking-[-0.02em] text-foreground">How do you want to build this website?</h1>
+            <p className="text-muted-foreground text-sm mt-1">Choose between the simple template form or the full advanced visual editor.</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
-            {WEBSITE_TYPES.map((type) => (
-              <button
-                key={type.value}
-                onClick={() => { setForm(f => ({ ...f, websiteType: type.value })); setStep(2); }}
-                className={`flex items-start gap-3 p-4 rounded-2xl border text-left transition-all hover:border-primary/60 hover:bg-primary/5 group ${
-                  form.websiteType === type.value ? 'border-primary bg-primary/5' : 'border-border bg-card'
-                }`}
-              >
-                <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
-                  <span className="material-icons text-muted-foreground group-hover:text-primary transition-colors">{type.icon}</span>
-                </div>
-                <div>
-                  <p className="font-medium text-foreground text-sm">{type.label}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{type.description}</p>
-                </div>
-              </button>
-            ))}
+            <button
+              onClick={() => {
+                setForm(f => ({ ...f, isSimple: true }));
+                setStep(2);
+              }}
+              className="group flex items-start gap-4 p-5 bg-card border border-border rounded-2xl hover:border-primary/50 hover:bg-accent/40 transition-colors text-left"
+            >
+              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center shrink-0">
+                <span className="material-icons text-muted-foreground group-hover:text-primary transition-colors">auto_awesome</span>
+              </div>
+              <div>
+                <p className="font-medium text-foreground text-sm">Simple Builder</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Pre-built 4-section layout. Just fill out a simple form to change the text and images. No coding required.</p>
+              </div>
+            </button>
+            <button
+              onClick={() => {
+                setForm(f => ({ ...f, isSimple: false }));
+                setStep(2);
+              }}
+              className="group flex items-start gap-4 p-5 bg-card border border-border rounded-2xl hover:border-primary/50 hover:bg-accent/40 transition-colors text-left"
+            >
+              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center shrink-0">
+                <span className="material-icons text-muted-foreground group-hover:text-primary transition-colors">dashboard_customize</span>
+              </div>
+              <div>
+                <p className="font-medium text-foreground text-sm">Advanced Visual Editor</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Full drag-and-drop canvas. Complete control over blocks, layouts, and custom code.</p>
+              </div>
+            </button>
           </div>
         </div>
       )}
@@ -122,12 +127,7 @@ export default function PortalCmsNewPage() {
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 onKeyDown={e => { if (e.key === 'Enter' && form.name) setStep(3); }}
-                placeholder={
-                  form.websiteType === 'business' ? 'e.g. Acme Corp Website' :
-                  form.websiteType === 'blog' ? 'e.g. My Blog' :
-                  form.websiteType === 'portfolio' ? 'e.g. My Portfolio' :
-                  'e.g. My Website'
-                }
+                placeholder="e.g. Acme Corp Website"
                 className={`${pInput} w-full`}
               />
             </div>
@@ -206,8 +206,8 @@ export default function PortalCmsNewPage() {
           <div className="bg-muted/30 border border-border rounded-2xl p-4 space-y-2 text-sm">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Summary</p>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Type</span>
-              <span className="text-foreground font-medium capitalize">{WEBSITE_TYPES.find(t => t.value === form.websiteType)?.label || form.websiteType}</span>
+              <span className="text-muted-foreground">Builder Mode</span>
+              <span className="text-foreground font-medium capitalize">{form.isSimple ? 'Simple Builder' : 'Advanced Editor'}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Name</span>
