@@ -1,5 +1,5 @@
 FROM oven/bun:1.3.11-alpine AS base
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ nodejs npm
 WORKDIR /app
 
 # Install dependencies
@@ -19,7 +19,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_IGNORE_ESLINT=1
 ENV NEXT_IGNORE_TYPECHECKS=1
-RUN bun run build
+RUN npx next build
 
 # Runner
 FROM base AS runner
@@ -33,4 +33,4 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/next.config.ts ./next.config.ts
 
 EXPOSE 3000
-CMD ["bun", "run", "start"]
+CMD ["npx", "next", "start"]
