@@ -14,7 +14,7 @@ export default async function PortalCmsPage({
 }: {
   searchParams: Promise<{ created?: string }>;
 }) {
-  const platformDomain = (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:\/\//, '');
+  const platformDomain = process.env.NEXT_PUBLIC_TENANT_DOMAIN || (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:///, '');
   const session = await auth();
   if (!session?.user?.id) redirect('/portal/login');
 

@@ -16,7 +16,7 @@ const WEBSITE_TYPES = [
 ];
 
 export default function PortalCmsNewPage() {
-  const platformDomain = (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:///, '');
+  const platformDomain = process.env.NEXT_PUBLIC_TENANT_DOMAIN || (process.env.NEXT_PUBLIC_APP_URL || 'https://simplerdevelopment.com').replace(/^https?:///, '');
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState({ name: '', domain: '', description: '', websiteType: '', subdomain: '' });

@@ -80,7 +80,7 @@ export async function deleteDnsRecord(recordId: string): Promise<void> {
 export async function listDnsRecords(
   name: string,
 ): Promise<Array<{ id: string; type: string; name: string; content: string }>> {
-  const params = new URLSearchParams({ name: `${name}.simplerdevelopment.com`, type: 'CNAME' });
+  const params = new URLSearchParams({ name: `${name}.${process.env.NEXT_PUBLIC_TENANT_DOMAIN || 'simplerdevelopment.com'}`, type: 'CNAME' });
   const res = await fetch(`${CF_API}/zones/${zoneId()}/dns_records?${params}`, {
     headers: headers(),
   });
